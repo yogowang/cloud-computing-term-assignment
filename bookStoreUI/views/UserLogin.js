@@ -1,10 +1,34 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
+import React, {useState} from 'react';
+import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {StatusBar} from 'expo-status-bar';
+import axios from "axios";
+import {StackActions as navigation} from "@react-navigation/routers/src";
 //source:https://code.tutsplus.com/common-react-native-app-layouts-login-page--cms-27639t
 export default function Login(){
     const [userName,setUserName]=useState('');
     const [password,setPassword]=useState('');
+    const [exception,setException]=useState({});
+    const validateLogin=()=>{
+        if(Object.keys(exception).length===0){
+            let loginIfo={
+                userName,password
+            }
+            axios.post("localhost:8080/login",loginIfo)
+                .then((response)=>{
+                    if(response.data!=="error"){
+                        navigation.replace("Index");
+                    }
+                    else{
+                        setException((ex)=>{
+                            return {
+                                ...ex,
+                                authException: "The account doesn't exist!!"
+                            };
+                        });
+                    }
+                });
+        }
+    }
     return(
         <View style={styles.container}>
             <StatusBar style='auto'/>

@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 @RestController
 public class login {
-    @PostMapping("/calculate")
+    @PostMapping("/login")
     public Map<String, Object> calculate(@RequestBody Map<String,Object> jsonData)  {
         Map<String,Object> ans = new HashMap<>();
         if(jsonData.get("file")==null){
