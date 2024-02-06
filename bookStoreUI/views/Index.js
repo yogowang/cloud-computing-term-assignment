@@ -1,12 +1,19 @@
 import React from 'react';
+import {View,StyleSheet,Text} from "react-native";
 
 const Index = () => {
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
-            <h1>Login Success</h1>
-            <p>Welcome to the dashboard!</p>
-        </div>
+        <View style={styles.container}>
+            <Text>Login successful</Text>
+        </View>
     );
 };
-
+const styles=StyleSheet.create({
+    container:{
+        flex:1,
+        backgroundColor:'#fff',
+        alignItems:'center',
+        justifyContent:'center'
+    },
+});
 export default Index;

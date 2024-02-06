@@ -2,10 +2,9 @@ import React, {useState} from 'react';
 import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {StatusBar} from 'expo-status-bar';
 import axios from "axios";
-import {StackActions as navigation} from "@react-navigation/routers/src";
 //source:https://code.tutsplus.com/common-react-native-app-layouts-login-page--cms-27639t
 //source:https://bobbyhadz.com/blog/react-axios-network-error-stack-trace
-export default function Login(){
+export default function Login({ navigation }){
     const [userName,setUserName]=useState('');
     const [password,setPassword]=useState('');
     const [exception,setException]=useState({});
@@ -14,7 +13,7 @@ export default function Login(){
             let loginIfo={
                 userName,password
             }
-            axios.post("https://100.64.57.28:8080/login",loginIfo)
+            axios.post("http://100.64.56.182:8080/login",loginIfo)
                 .then((response)=>{
                     if(response.data!=="error"){
                         navigation.replace("Index");
