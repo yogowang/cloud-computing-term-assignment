@@ -14,7 +14,7 @@ export default function Login({ navigation }){
                 userName,password
             }
             //Change the ip to the current ip
-            axios.post("http://100.64.56.92:8080/login",loginIfo)
+            axios.post("http://100.64.57.19:8080/login",loginIfo)
                 .then((response)=>{
                     if(response.data!=="error"){
                         navigation.replace("Index");
