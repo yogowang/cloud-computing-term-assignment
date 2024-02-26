@@ -37,4 +37,16 @@ public class login {
         }
         return userName;
     }
+    @PostMapping("/register")
+    @CrossOrigin(origins = "*")
+    public String register(@RequestBody User user){
+        try {
+            userProcess.save(user);
+            return user.getUserName();
+        }catch (Exception e){
+            e.printStackTrace();
+            return "error";
+        }
+
+    }
 }
