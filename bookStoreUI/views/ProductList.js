@@ -1,5 +1,6 @@
 //Source:https://www.geeksforgeeks.org/create-an-e-commerce-app-using-react-native/
-import React, { useState } from "react";
+//Source:https://www.youtube.com/watch?v=s8oQOZsW9Hw
+import React, {useEffect, useState} from "react";
 import {
     View,
     Text,
@@ -11,12 +12,13 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import SharedUIStyles from "../styles/SharedUIStyles";
 const ECommerceApp = () => {
-    const [products, setProducts] = useState([
-        { id: "1", name: "Samsung galaxy M11", price: 70.99 },
-        { id: "2", name: "MacBook pro", price: 109.99 },
-        { id: "3", name: "Study Table", price: 39.99 },
-    ]);
-
+    const [products, setProducts] = useState([]);
+    useEffect(() => {
+        fetch('http://100.64.57.27:8080/fetchAllBook')
+            .then((response) => response.json())
+            .then((data) => setProducts(data))
+            .catch((error) => console.error(error));
+    }, []);
     const [cart, setCart] = useState([]);
     const [isModalVisible, setModalVisible] = useState(false);
 
@@ -25,7 +27,7 @@ const ECommerceApp = () => {
     };
 
     const removeFromCart = (productId) => {
-        const updatedCart = cart.filter((item) => item.id !== productId);
+        const updatedCart = cart.filter((item) => item.bookId !== productId);
         setCart(updatedCart);
     };
 
@@ -35,7 +37,7 @@ const ECommerceApp = () => {
 
     const renderProductItem = ({ item }) => (
         <View style={SharedUIStyles.productItemContainer}>
-            <Text style={SharedUIStyles.productItemName}>{item.name}</Text>
+            <Text style={SharedUIStyles.productItemName}>{item.bookName}</Text>
             <Text style={SharedUIStyles.productItemPrice}>
                 ${item.price.toFixed(2)}
             </Text>
@@ -52,14 +54,14 @@ const ECommerceApp = () => {
     const renderCartItem = ({ item }) => (
         <View style={SharedUIStyles.cartItemContainer}>
             <View>
-                <Text style={SharedUIStyles.cartItemName}>{item.name}</Text>
+                <Text style={SharedUIStyles.cartItemName}>{item.bookName}</Text>
                 <Text style={SharedUIStyles.cartItemPrice}>
                     ${item.price.toFixed(2)}
                 </Text>
             </View>
             <TouchableOpacity
                 style={SharedUIStyles.removeButton}
-                onPress={() => removeFromCart(item.id)}
+                onPress={() => removeFromCart(item.bookId)}
             >
                 <Ionicons name="trash-outline" size={20} color="white" />
             </TouchableOpacity>
@@ -84,7 +86,7 @@ const ECommerceApp = () => {
 
             <FlatList
                 data={products}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.bookId}
                 renderItem={renderProductItem}
             />
 
@@ -97,7 +99,7 @@ const ECommerceApp = () => {
                 ) : (
                     <FlatList
                         data={cart}
-                        keyExtractor={(item) => item.id}
+                        keyExtractor={(item) => item.bookId}
                         renderItem={renderCartItem}
                     />
                 )}
