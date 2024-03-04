@@ -15,10 +15,10 @@ export default function Login({ navigation }){
                 userName,password
             }
             //Change the ip to the current ip
-            axios.post("http://54.167.34.33:8080/login",loginIfo)
+            axios.post("http://100.64.57.27:8080/login",loginIfo)
                 .then((response)=>{
                     if(response.data!=="error"){
-                        navigation.replace("Index");
+                        navigation.replace("Product");
                     }
                     else{
                         setException((ex)=>{
