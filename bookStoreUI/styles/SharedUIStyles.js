@@ -41,6 +41,7 @@ export default StyleSheet.create({
         textAlign: "center",
         color: "#333",
     },
+    //2nd part
     productItemContainer: {
         marginBottom: 10,
         borderRadius: 10,

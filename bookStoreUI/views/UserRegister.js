@@ -24,7 +24,7 @@ export default function  Register({navigation}){
                 userName,password
             }
             //Change the ip to the current ip
-            axios.post("http://100.64.57.189:8080/register",registerInfo)
+            axios.post("http://localhost:8080/register",registerInfo)
                 .then((response)=>{
                     if(response.data!=="error"){
                         navigation.replace("userLogin");
