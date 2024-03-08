@@ -5,45 +5,23 @@ Transform: AWS::Serverless-2016-10-31
 Globals:
   Function:
     Timeout: 30
-    Environment:
-      Variables:
-        POWERTOOLS_SERVICE_NAME: ProductApi
-        SECRET_NAME: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${DatabaseSecretName}
-        DATABASE_ENDPOINT: !Ref DatabaseEndpoint
-
-Parameters:
-  SecurityGroupId:
-    Description: Security Group for the application
-    Type: String
-  Subnet1Id:
-    Description: Subnet Id for the first subnet
-    Type: String
-  Subnet2Id:
-    Description: Subnet Id for the second subnet
-    Type: String
-  DatabaseSecretName:
-    Description: The name of the secret holding database credentials
-    Type: String
-  DatabaseEndpoint:
-    Description: The endpoint of the database
-    Type: String
 
 Resources:
-  ProductApiFunction:
+  StoreApiFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: .
-      Handler: com.product.api.StreamLambdaHandler::handleRequest
+      Handler: com.backend.demo.LambdaStreamHandler::handleRequest
       Runtime: java21
       AutoPublishAlias: production
       SnapStart:
         ApplyOn: PublishedVersions
       VpcConfig:
         SecurityGroupIds:
-          - !Ref SecurityGroupId
+          - sg-0312792f7afdd0f15
         SubnetIds:
-          - !Ref Subnet1Id
-          - !Ref Subnet2Id
+          - subnet-00898f2d70739088c
+          - subnet-07c341bc84347f808
       Architectures:
         - x86_64
       MemorySize: 2048
@@ -54,7 +32,7 @@ Resources:
         - AWSSecretsManagerGetSecretValuePolicy:
             SecretArn: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${DatabaseSecretName}
       Events:
-        HelloWorld:
+        StoreBook:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /{proxy+}

@@ -13,14 +13,25 @@ public class User {
     private String userName;
     @Column(name="PASSWORD")
     private String password;
+    @Column(name="IS_ADMIN")
+    private int isAdmin;
 
-    public User(String userName, String password) {
+    public User(String userName, String password, int isAdmin) {
         this.userName = userName;
         this.password = password;
+        this.isAdmin = isAdmin;
     }
 
     public User() {
 
+    }
+
+    public int getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(int isAdmin) {
+        this.isAdmin = isAdmin;
     }
 
     public String getUserName() {
