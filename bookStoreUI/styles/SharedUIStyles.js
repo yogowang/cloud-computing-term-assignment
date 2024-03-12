@@ -1,5 +1,6 @@
 //source:https://code.tutsplus.com/common-react-native-app-layouts-login-page--cms-27639t
 //Source:https://www.geeksforgeeks.org/create-an-e-commerce-app-using-react-native/
+//Source:https://reactnative.dev/docs/checkbox
 import { StyleSheet } from "react-native";
 export default StyleSheet.create({
     container: {
@@ -34,6 +35,17 @@ export default StyleSheet.create({
     loginText: {
         color:"black"
     },
+    checkboxContainer: {
+        flexDirection: 'row',
+        marginBottom: 20,
+    },
+    checkbox: {
+        alignSelf: 'center',
+    },
+    label: {
+        margin: 8,
+    },
+    //2nd part
     heading: {
         fontSize: 24,
         fontWeight: "bold",
@@ -41,6 +53,7 @@ export default StyleSheet.create({
         textAlign: "center",
         color: "#333",
     },
+
     productItemContainer: {
         marginBottom: 10,
         borderRadius: 10,

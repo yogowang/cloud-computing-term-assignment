@@ -7,8 +7,9 @@ import ProductList from "./ProductList";
 const Stack = createStackNavigator();
 const NavigationTabs=()=>{
     return(
-<Stack.Navigator>
-    <Stack.Screen name='userLogin' component={UserLogin}/>
+<Stack.Navigator
+screenOptions={{headerShown: false}}>
+    <Stack.Screen name='UserLogin' component={UserLogin}/>
     <Stack.Screen name='register' component={UserRegister}/>
     <Stack.Screen name='Index' component={Index}/>
     <Stack.Screen name='Product' component={ProductList}/>

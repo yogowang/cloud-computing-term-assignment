@@ -14,7 +14,7 @@ import SharedUIStyles from "../styles/SharedUIStyles";
 const ECommerceApp = () => {
     const [products, setProducts] = useState([]);
     useEffect(() => {
-        fetch('http://100.64.57.27:8080/fetchAllBook')
+        fetch('https://e5ynuit12m.execute-api.us-east-1.amazonaws.com/booklist/fetchAllBook')
             .then((response) => response.json())
             .then((data) => setProducts(data))
             .catch((error) => console.error(error));

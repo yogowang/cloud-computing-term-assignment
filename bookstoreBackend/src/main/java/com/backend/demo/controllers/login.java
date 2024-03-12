@@ -1,5 +1,6 @@
 package com.backend.demo.controllers;
 
+import com.backend.demo.entity.LoginInfo;
 import com.backend.demo.entity.User;
 import com.backend.demo.repo.UserProcess;
 import org.springframework.http.HttpEntity;
@@ -21,14 +22,14 @@ public class login {
 
     @PostMapping("/login")
     @CrossOrigin(origins = "*")
-    public String checkLoginInfo(@RequestBody User user)  {
-        String userName=user.getUserName();
-        String password= user.getPassword();
-        Optional<User> users=userProcess.findUserByUserName(userName);
-        if(users.isEmpty()){
+    public String checkLoginInfo(@RequestBody LoginInfo loginInfo)  {
+        String userName=loginInfo.getUserName();
+        String password= loginInfo.getPassword();
+        Optional<User> user=userProcess.findUserByUserName(userName);
+        if(user.isEmpty()){
             return "error";
         }
-        if(!Objects.equals(users.get().getPassword(), password)){
+        if(!Objects.equals(user.get().getPassword(), password)){
             return "error";
         }
         return userName;
