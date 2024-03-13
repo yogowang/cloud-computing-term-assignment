@@ -10,7 +10,6 @@ export default function Login({ navigation }){
     const [password,setPassword]=useState('');
     const [exception,setException]=useState({});
     const validateLogin=()=>{
-        if(Object.keys(exception).length===0){
             let loginIfo={
                 userName,password
             }
@@ -18,7 +17,8 @@ export default function Login({ navigation }){
             axios.post("http://localhost:8080/login",loginIfo)
                 .then((response)=>{
                     if(response.data!=="error"){
-                        navigation.replace("Index");
+                        const userName=response.data
+                        navigation.replace("Index",{userName});
                     }
                     else{
                         setException((ex)=>{
@@ -33,7 +33,6 @@ export default function Login({ navigation }){
                     console.error(ex);
                 }
             );
-        }
     }
     const toRegister=()=>{
         navigation.replace("register");
