@@ -16,9 +16,11 @@ export default function Login({ navigation }){
             //Change the ip to the current ip
             axios.post("http://localhost:8080/login",loginIfo)
                 .then((response)=>{
-                    if(response.data!=="error"){
-                        const userName=response.data
-                        navigation.replace("Index",{userName});
+                    //500 means internal error
+                    if(response.data&&response.loginstat!=="error"&&response.status!==500){
+                        const userName=response.data.username
+                        const isAdmin=response.data.isadmin
+                        navigation.replace("Index",{userName,isAdmin});
                     }
                     else{
                         setException((ex)=>{

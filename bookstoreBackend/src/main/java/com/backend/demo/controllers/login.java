@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -22,17 +24,24 @@ public class login {
 
     @PostMapping("/login")
     @CrossOrigin(origins = "*")
-    public String checkLoginInfo(@RequestBody LoginInfo loginInfo)  {
+    public Map<String,Object> checkLoginInfo(@RequestBody LoginInfo loginInfo)  {
+        Map<String,Object> ans =new HashMap<>();
         String userName=loginInfo.getUserName();
         String password= loginInfo.getPassword();
         Optional<User> user=userProcess.findUserByUserName(userName);
         if(user.isEmpty()){
-            return "error";
+            ans.put("loginstat","error");
+            return ans;
         }
         if(!Objects.equals(user.get().getPassword(), password)){
-            return "error";
+            ans.put("loginstat","error");
+            return ans;
         }
-        return userName;
+        int isAdmin=user.get().getIsAdmin();
+        ans.put("loginstat","success");
+        ans.put("isadmin",isAdmin);
+        ans.put("username",userName);
+        return ans;
     }
     @PostMapping("/register")
     @CrossOrigin(origins = "*")

@@ -3,7 +3,7 @@ import {View,  Text,  TouchableOpacity} from "react-native";
 import SharedUIStyles from "../styles/SharedUIStyles";
 //source:https://reactnavigation.org/docs/params/
 const Index = ({navigation,route}) => {
-    const {userName}=route.params
+    const {userName,isadmin}=route.params
     const toProduct=()=>{
         navigation.replace("Product")
     }
@@ -11,7 +11,7 @@ const Index = ({navigation,route}) => {
         navigation.replace("UserLogin")
     }
     const toInfo=()=>{
-        navigation.replace("UserInfo",{userName})
+        navigation.replace("UserInfo",{userName,isadmin})
     }
     return(
        <View style={SharedUIStyles.container}>
