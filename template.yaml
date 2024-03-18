@@ -1,0 +1,45 @@
+# source:https://www.jennapederson.com/blog/provisioning-an-ec2-instance-with-cloudformation-part-1/
+AWSTemplateFormatVersion: 2010-09-09
+Description: Iac for bookstore
+
+Resources:
+  WebAppInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0d5eff06f840b45e9 # ImageID valid only in us-east-1 region
+      InstanceType: t2.micro
+      KeyName: NewBookstoreKey
+      SecurityGroupIds:
+        - !Ref WebAppSecurityGroup
+
+  WebAppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Join ["-", [store-security-group, dev]]
+      GroupDescription: "Allow HTTP/HTTPS and SSH inbound and outbound traffic"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: "-1"
+          CidrIp: 0.0.0.0/0
+#source: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-dbinstance.html
+  BookstoreRDS:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: store-database
+      DBName: bookstore
+      AllocatedStorage: "20"
+      MasterUsername: admin
+      MasterUserPassword: wyc200081
+      Engine: mysql
+      DBInstanceClass: db.t2.micro
+      PubliclyAccessible: true
+      MultiAZ: false
+      StorageType: gp2
+       

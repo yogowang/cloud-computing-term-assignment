@@ -1,23 +1,26 @@
 import React from 'react';
-import {View, StyleSheet, Text, TextInput, TouchableOpacity} from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import {createStackNavigator} from "@react-navigation/stack";
-import ProductList from "./ProductList";
-import UserLogin from "./UserLogin";
+import {View,  Text,  TouchableOpacity} from "react-native";
 import SharedUIStyles from "../styles/SharedUIStyles";
-
-const Index = ({navigation}) => {
+//source:https://reactnavigation.org/docs/params/
+const Index = ({navigation,route}) => {
+    const {userName,isadmin}=route.params
     const toProduct=()=>{
         navigation.replace("Product")
     }
     const toLogout=()=>{
         navigation.replace("UserLogin")
     }
+    const toInfo=()=>{
+        navigation.replace("UserInfo",{userName,isadmin})
+    }
     return(
        <View style={SharedUIStyles.container}>
             <TouchableOpacity style={SharedUIStyles.loginBtn} onPress={toProduct}>
                 <Text style={SharedUIStyles.loginText}>Books</Text>
             </TouchableOpacity>
+           <TouchableOpacity style={SharedUIStyles.loginBtn} onPress={toInfo}>
+               <Text style={SharedUIStyles.loginText}>User Info</Text>
+           </TouchableOpacity>
             <TouchableOpacity style={SharedUIStyles.loginBtn} onPress={toLogout}>
                 <Text style={SharedUIStyles.loginText}>Log out</Text>
             </TouchableOpacity>

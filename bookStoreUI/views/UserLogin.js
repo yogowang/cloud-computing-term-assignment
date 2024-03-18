@@ -10,15 +10,17 @@ export default function Login({ navigation }){
     const [password,setPassword]=useState('');
     const [exception,setException]=useState({});
     const validateLogin=()=>{
-        if(Object.keys(exception).length===0){
             let loginIfo={
                 userName,password
             }
             //Change the ip to the current ip
             axios.post("http://localhost:8080/login",loginIfo)
                 .then((response)=>{
-                    if(response.data!=="error"){
-                        navigation.replace("Index");
+                    //500 means internal error
+                    if(response.data&&response.loginstat!=="error"&&response.status!==500){
+                        const userName=response.data.username
+                        const isAdmin=response.data.isadmin
+                        navigation.replace("Index",{userName,isAdmin});
                     }
                     else{
                         setException((ex)=>{
@@ -33,7 +35,6 @@ export default function Login({ navigation }){
                     console.error(ex);
                 }
             );
-        }
     }
     const toRegister=()=>{
         navigation.replace("register");
