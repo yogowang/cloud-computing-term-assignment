@@ -5,7 +5,7 @@ import SharedUIStyles from "../styles/SharedUIStyles";
 const Index = ({navigation,route}) => {
     const {userName,isadmin}=route.params
     const toProduct=()=>{
-        navigation.replace("Product")
+        navigation.replace("Product",{userName})
     }
     const toLogout=()=>{
         navigation.replace("UserLogin")

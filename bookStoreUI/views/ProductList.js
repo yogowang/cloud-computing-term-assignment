@@ -82,7 +82,6 @@ const ECommerceApp = () => {
 
     return (
         <View style={SharedUIStyles.container}>
-            <Text style={SharedUIStyles.heading}>E-Commerce App</Text>
 
             <FlatList
                 data={products}
@@ -90,7 +89,7 @@ const ECommerceApp = () => {
                 renderItem={renderProductItem}
             />
 
-            <View style={SharedUIStyles.cartContainer}>
+            {/* <View style={SharedUIStyles.cartContainer}>
                 <Text style={SharedUIStyles.cartHeading}>Shopping Cart</Text>
                 {cart.length === 0 ? (
                     <Text style={SharedUIStyles.emptyCartMessage}>
@@ -134,7 +133,7 @@ const ECommerceApp = () => {
                         <Button title="Close" onPress={toggleModal} />
                     </View>
                 </View>
-            </Modal>
+            </Modal>*/}
         </View>
     );
 };
