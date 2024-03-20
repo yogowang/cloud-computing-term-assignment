@@ -11,7 +11,9 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import SharedUIStyles from "../styles/SharedUIStyles";
-const ECommerceApp = () => {
+import axios from "axios";
+const ECommerceApp = ({navigation,route}) => {
+    const {userName}=route.params
     const [products, setProducts] = useState([]);
     useEffect(() => {
         fetch('https://e5ynuit12m.execute-api.us-east-1.amazonaws.com/booklist/fetchAllBook')
@@ -22,8 +24,22 @@ const ECommerceApp = () => {
     const [cart, setCart] = useState([]);
     const [isModalVisible, setModalVisible] = useState(false);
 
-    const addToCart = (product) => {
-        setCart([...cart, product]);
+    const addToCart = (bookId) => {
+        const number=1
+        let pairing ={
+            bookId,userName,number
+        }
+        axios.post("http://localhost:8080/addCart",pairing)
+            .then((response)=>{
+                //500 means internal error
+                if(response.data!=="error"){
+                    alert("add successful")
+                }
+                else{
+                    alert("error occurred")
+                }
+            }).catch((ex)=> console.error(ex));
+        //setCart([...cart, product]);
     };
 
     const removeFromCart = (productId) => {
@@ -43,7 +59,7 @@ const ECommerceApp = () => {
             </Text>
             <TouchableOpacity
                 style={SharedUIStyles.addButton}
-                onPress={() => addToCart(item)}
+                onPress={() => addToCart(item.bookId)}
             >
                 <Text style={SharedUIStyles.addButtonText}>Add to Cart</Text>
                 <Ionicons name="cart-outline" size={20} color="white" />
