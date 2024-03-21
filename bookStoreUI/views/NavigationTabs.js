@@ -5,6 +5,7 @@ import Index from "./Index";
 import UserRegister from"./UserRegister"
 import ProductList from "./ProductList";
 import UserInfo from "./UserInfo";
+import Cart from "./Cart";
 const Stack = createStackNavigator();
 const NavigationTabs=()=>{
     return(
@@ -15,6 +16,7 @@ screenOptions={{headerShown: false}}>
     <Stack.Screen name='Index' component={Index}/>
     <Stack.Screen name='Product' component={ProductList}/>
     <Stack.Screen name='UserInfo' component={UserInfo}/>
+    <Stack.Screen name='Cart' component={Cart}/>
 </Stack.Navigator>)
 };
 export default NavigationTabs;

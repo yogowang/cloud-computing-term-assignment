@@ -168,4 +168,10 @@ export default StyleSheet.create({
         textAlign: "center",
         marginVertical: 10,
     },
+    //3rd part
+    item: {
+        padding: 20,
+        fontSize: 15,
+        marginTop: 5,
+    }
 })

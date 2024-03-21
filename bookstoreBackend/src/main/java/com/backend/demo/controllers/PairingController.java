@@ -2,11 +2,9 @@ package com.backend.demo.controllers;
 
 import com.backend.demo.entity.Pairing;
 import com.backend.demo.repo.PairingProcess;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -43,5 +41,8 @@ public class PairingController {
         }
 
     }
+    @GetMapping("/getCart/{userName}")
+    @CrossOrigin(origins = "*")
+    List<Pairing> getAllItems(@PathVariable String userName){return pairingProcess.findPairingsByUserName(userName);}
 
 }

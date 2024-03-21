@@ -13,6 +13,9 @@ const Index = ({navigation,route}) => {
     const toInfo=()=>{
         navigation.replace("UserInfo",{userName,isadmin})
     }
+    const toCart=()=>{
+        navigation.replace("Cart",{userName})
+    }
     return(
        <View style={SharedUIStyles.container}>
             <TouchableOpacity style={SharedUIStyles.loginBtn} onPress={toProduct}>
@@ -20,6 +23,9 @@ const Index = ({navigation,route}) => {
             </TouchableOpacity>
            <TouchableOpacity style={SharedUIStyles.loginBtn} onPress={toInfo}>
                <Text style={SharedUIStyles.loginText}>User Info</Text>
+           </TouchableOpacity>
+           <TouchableOpacity style={SharedUIStyles.loginBtn} onPress={toCart}>
+               <Text style={SharedUIStyles.loginText}>Cart</Text>
            </TouchableOpacity>
             <TouchableOpacity style={SharedUIStyles.loginBtn} onPress={toLogout}>
                 <Text style={SharedUIStyles.loginText}>Log out</Text>

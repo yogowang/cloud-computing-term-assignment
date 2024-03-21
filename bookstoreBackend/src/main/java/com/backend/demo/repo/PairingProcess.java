@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface PairingProcess extends JpaRepository<Pairing,Long> {
     Optional<Pairing> findPairingByBookIdAndUserName(int bookId,String userName);
-    List<Pairing> getPairingsByUserName(String userName);
+    List<Pairing> findPairingsByUserName(String userName);
 }
