@@ -4,7 +4,7 @@ import SharedUIStyles from "../styles/SharedUIStyles";
 const UserInfo=({navigation,route})=>{
     const {userName,isadmin}=route.params
     const back=()=>{
-        navigation.replace("Index",userName)
+        navigation.goBack()
     }
     return(
        <View style={SharedUIStyles.container}>

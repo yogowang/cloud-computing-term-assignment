@@ -11,7 +11,9 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import SharedUIStyles from "../styles/SharedUIStyles";
-const ECommerceApp = () => {
+import axios from "axios";
+const ECommerceApp = ({navigation,route}) => {
+    const {userName}=route.params
     const [products, setProducts] = useState([]);
     useEffect(() => {
         fetch('https://e5ynuit12m.execute-api.us-east-1.amazonaws.com/booklist/fetchAllBook')
@@ -21,9 +23,27 @@ const ECommerceApp = () => {
     }, []);
     const [cart, setCart] = useState([]);
     const [isModalVisible, setModalVisible] = useState(false);
-
-    const addToCart = (product) => {
-        setCart([...cart, product]);
+    const back=()=>{
+        navigation.goBack()
+    }
+    const addToCart = (book) => {
+        const number=1
+        const bookId=book.bookId
+        const bookName=book.bookName
+        let pairing ={
+            bookId,userName,number,bookName
+        }
+        axios.post("http://localhost:8080/addCart",pairing)
+            .then((response)=>{
+                //500 means internal error
+                if(response.data!=="error"){
+                    alert("add successful")
+                }
+                else{
+                    alert("error occurred")
+                }
+            }).catch((ex)=> console.error(ex));
+        //setCart([...cart, product]);
     };
 
     const removeFromCart = (productId) => {
@@ -82,59 +102,14 @@ const ECommerceApp = () => {
 
     return (
         <View style={SharedUIStyles.container}>
-            <Text style={SharedUIStyles.heading}>E-Commerce App</Text>
-
             <FlatList
                 data={products}
                 keyExtractor={(item) => item.bookId}
                 renderItem={renderProductItem}
             />
-
-            <View style={SharedUIStyles.cartContainer}>
-                <Text style={SharedUIStyles.cartHeading}>Shopping Cart</Text>
-                {cart.length === 0 ? (
-                    <Text style={SharedUIStyles.emptyCartMessage}>
-                        Add at least one product to the cart.
-                    </Text>
-                ) : (
-                    <FlatList
-                        data={cart}
-                        keyExtractor={(item) => item.bookId}
-                        renderItem={renderCartItem}
-                    />
-                )}
-                <View style={SharedUIStyles.totalContainer}>
-                    <Text style={SharedUIStyles.totalText}>
-                        Total: ${calculateTotal()}
-                    </Text>
-                    <TouchableOpacity
-                        style={SharedUIStyles.checkoutButton}
-                        onPress={handleCheckout}
-                    >
-                        <Text style={SharedUIStyles.checkoutButtonText}>
-                            Proceed to Checkout
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={isModalVisible}
-                onRequestClose={toggleModal}
-            >
-                <View style={SharedUIStyles.modalContainer}>
-                    <View style={SharedUIStyles.modalContent}>
-                        <Text style={SharedUIStyles.modalText}>
-                            {cart.length === 0
-                                ? "Add at least one product to the cart before proceeding."
-                                : "Congratulations! Your order is placed successfully."}
-                        </Text>
-                        <Button title="Close" onPress={toggleModal} />
-                    </View>
-                </View>
-            </Modal>
+            <TouchableOpacity style={SharedUIStyles.loginBtn} onPress={back}>
+                <Text style={SharedUIStyles.loginText}>back</Text>
+            </TouchableOpacity>
         </View>
     );
 };
