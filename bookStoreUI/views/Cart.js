@@ -5,7 +5,7 @@ import {useEffect, useState} from "react";
 const Cart=({navigation,route})=>{
     const {userName}=route.params
     const [products, setProducts] = useState([]);
-    const link='https://e5ynuit12m.execute-api.us-east-1.amazonaws.com/booklist/getCart/'+userName
+    const link='http://localhost:8080/getCart/'+userName
     useEffect(() => {
         fetch(link)
             .then((response) => response.json())
