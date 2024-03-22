@@ -2,6 +2,7 @@ package com.backend.demo.controllers;
 
 import com.backend.demo.entity.Pairing;
 import com.backend.demo.repo.PairingProcess;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,10 +17,12 @@ public class PairingController {
     }
     @PostMapping("/addCart")
     @CrossOrigin(origins = "*")
+    @Transactional
     String addToCart(@RequestBody Pairing pairing){
         int bookId=pairing.getBookId();
         String userName=pairing.getUserName();
         int number=pairing.getNumber();
+        String bookName=pairing.getBookName();
         Optional<Pairing> pairingOptional=pairingProcess.findPairingByBookIdAndUserName(bookId,userName);
         try {
         if(pairingOptional.isEmpty()){
@@ -31,6 +34,7 @@ public class PairingController {
                     newPairing.setBookId(bookId);
                     newPairing.setUserName(userName);
                     newPairing.setNumber(number+pairingOptional.get().getNumber());
+                    newPairing.setBookName(bookName);
                     return pairingProcess.save(newPairing);
                 }
         );

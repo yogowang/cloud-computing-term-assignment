@@ -5,16 +5,16 @@ import SharedUIStyles from "../styles/SharedUIStyles";
 const Index = ({navigation,route}) => {
     const {userName,isadmin}=route.params
     const toProduct=()=>{
-        navigation.replace("Product",{userName})
+        navigation.push("Product",{userName})
     }
     const toLogout=()=>{
         navigation.replace("UserLogin")
     }
     const toInfo=()=>{
-        navigation.replace("UserInfo",{userName,isadmin})
+        navigation.push("UserInfo",{userName,isadmin})
     }
     const toCart=()=>{
-        navigation.replace("Cart",{userName})
+        navigation.push("Cart",{userName})
     }
     return(
        <View style={SharedUIStyles.container}>

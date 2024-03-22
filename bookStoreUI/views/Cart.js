@@ -5,7 +5,7 @@ import {useEffect, useState} from "react";
 const Cart=({navigation,route})=>{
     const {userName}=route.params
     const [products, setProducts] = useState([]);
-    const link='http://localhost:8080/getCart/'+userName
+    const link='https://e5ynuit12m.execute-api.us-east-1.amazonaws.com/booklist/getCart/'+userName
     useEffect(() => {
         fetch(link)
             .then((response) => response.json())
@@ -13,11 +13,12 @@ const Cart=({navigation,route})=>{
             .catch((error) => console.error(error));
     }, []);
     const back=()=>{
-        navigation.replace("Index",userName)
+        navigation.goBack()
     }
     const renderProductItem = ({ item }) => (
         <View style={SharedUIStyles.productItemContainer}>
-            <Text style={SharedUIStyles.productItemName}>{item.bookId}</Text>
+            <Text style={SharedUIStyles.productItemName}>{item.bookName}</Text>
+            <Text style={SharedUIStyles.productItemName}>Number: {item.number}</Text>
         </View>
     );
     return(

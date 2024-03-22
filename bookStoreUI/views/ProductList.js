@@ -23,11 +23,15 @@ const ECommerceApp = ({navigation,route}) => {
     }, []);
     const [cart, setCart] = useState([]);
     const [isModalVisible, setModalVisible] = useState(false);
-
-    const addToCart = (bookId) => {
+    const back=()=>{
+        navigation.goBack()
+    }
+    const addToCart = (book) => {
         const number=1
+        const bookId=book.bookId
+        const bookName=book.bookName
         let pairing ={
-            bookId,userName,number
+            bookId,userName,number,bookName
         }
         axios.post("http://localhost:8080/addCart",pairing)
             .then((response)=>{
@@ -59,7 +63,7 @@ const ECommerceApp = ({navigation,route}) => {
             </Text>
             <TouchableOpacity
                 style={SharedUIStyles.addButton}
-                onPress={() => addToCart(item.bookId)}
+                onPress={() => addToCart(item)}
             >
                 <Text style={SharedUIStyles.addButtonText}>Add to Cart</Text>
                 <Ionicons name="cart-outline" size={20} color="white" />
@@ -98,58 +102,14 @@ const ECommerceApp = ({navigation,route}) => {
 
     return (
         <View style={SharedUIStyles.container}>
-
             <FlatList
                 data={products}
                 keyExtractor={(item) => item.bookId}
                 renderItem={renderProductItem}
             />
-
-            {/* <View style={SharedUIStyles.cartContainer}>
-                <Text style={SharedUIStyles.cartHeading}>Shopping Cart</Text>
-                {cart.length === 0 ? (
-                    <Text style={SharedUIStyles.emptyCartMessage}>
-                        Add at least one product to the cart.
-                    </Text>
-                ) : (
-                    <FlatList
-                        data={cart}
-                        keyExtractor={(item) => item.bookId}
-                        renderItem={renderCartItem}
-                    />
-                )}
-                <View style={SharedUIStyles.totalContainer}>
-                    <Text style={SharedUIStyles.totalText}>
-                        Total: ${calculateTotal()}
-                    </Text>
-                    <TouchableOpacity
-                        style={SharedUIStyles.checkoutButton}
-                        onPress={handleCheckout}
-                    >
-                        <Text style={SharedUIStyles.checkoutButtonText}>
-                            Proceed to Checkout
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={isModalVisible}
-                onRequestClose={toggleModal}
-            >
-                <View style={SharedUIStyles.modalContainer}>
-                    <View style={SharedUIStyles.modalContent}>
-                        <Text style={SharedUIStyles.modalText}>
-                            {cart.length === 0
-                                ? "Add at least one product to the cart before proceeding."
-                                : "Congratulations! Your order is placed successfully."}
-                        </Text>
-                        <Button title="Close" onPress={toggleModal} />
-                    </View>
-                </View>
-            </Modal>*/}
+            <TouchableOpacity style={SharedUIStyles.loginBtn} onPress={back}>
+                <Text style={SharedUIStyles.loginText}>back</Text>
+            </TouchableOpacity>
         </View>
     );
 };

@@ -1,13 +1,12 @@
 package com.backend.demo.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "pairing")
+@IdClass(PairingId.class)
 public class Pairing {
+    @Id
     @Column(name = "BOOK_ID")
     private int bookId;
     @Id
@@ -15,11 +14,14 @@ public class Pairing {
     private String userName;
     @Column(name = "NUMBER")
     private int number;
+    @Column(name="BOOK_NAME")
+    private String bookName;
 
-    public Pairing(int bookId, String userName, int number) {
+    public Pairing(int bookId, String userName, int number, String bookName) {
         this.bookId = bookId;
         this.userName = userName;
         this.number = number;
+        this.bookName = bookName;
     }
 
     public Pairing() {
@@ -48,5 +50,13 @@ public class Pairing {
 
     public void setNumber(int number) {
         this.number = number;
+    }
+
+    public String getBookName() {
+        return bookName;
+    }
+
+    public void setBookName(String bookName) {
+        this.bookName = bookName;
     }
 }
