@@ -8,7 +8,7 @@ const UserInfo=({navigation,route})=>{
     }
     return(
        <View style={SharedUIStyles.container}>
-           <Text style={SharedUIStyles.loginText}>your user is {userName}</Text>
+           <Text style={SharedUIStyles.loginText}>your name is {userName}</Text>
            <Text style={SharedUIStyles.loginText}>your are {isadmin===1?"an admin":"a user"}</Text>
        <TouchableOpacity style={SharedUIStyles.loginBtn} onPress={back}>
            <Text style={SharedUIStyles.loginText}>back</Text>

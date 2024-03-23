@@ -8,7 +8,6 @@ import SharedUIStyles from "../styles/SharedUIStyles";
 export default function Login({ navigation }){
     const [userName,setUserName]=useState('');
     const [password,setPassword]=useState('');
-    const [exception,setException]=useState({});
     const validateLogin=()=>{
             let loginIfo={
                 userName,password
@@ -20,24 +19,23 @@ export default function Login({ navigation }){
                     if(response.data&&response.loginstat!=="error"&&response.status!==500){
                         const userName=response.data.username
                         const isAdmin=response.data.isadmin
+                        if(isAdmin===0){
                         navigation.replace("Index",{userName,isAdmin});
+                        }
+                        else if(isAdmin===1){
+                            navigation.replace("AdminIndex",{userName,isAdmin});
+                        }
                     }
                     else{
-                        setException((ex)=>{
-                            return {
-                                ex,
-                                authException: "The account doesn't exist!!"
-                            };
-                        });
+                        alert("The account doesn't exist!!")
                     }
                 }).catch((ex)=>{
-                    setException("error when login");
                     console.error(ex);
                 }
             );
     }
     const toRegister=()=>{
-        navigation.replace("register");
+        navigation.push("register");
     }
     return(
         <View style={SharedUIStyles.container}>

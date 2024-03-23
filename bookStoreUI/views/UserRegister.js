@@ -30,7 +30,7 @@ export default function  Register({navigation}){
                 .then((response)=>{
                     if(response.data!=="error"){
                         alert("Register successful")
-                        navigation.replace("userLogin");
+                        navigation.goBack();
                     }
                     else{
                         setException((ex)=>{
