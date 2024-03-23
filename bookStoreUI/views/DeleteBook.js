@@ -24,9 +24,7 @@ const DeleteBook = ({navigation}) => {
         navigation.goBack()
     }
     const RemoveBook = (bookId) => {
-
-
-        axios.post("http://localhost:8080/removeBook",bookId)
+        axios.post(`http://localhost:8080/removeBook/${bookId}`)
             .then((response)=>{
                 //500 means internal error
                 if(response.data!=="error"){

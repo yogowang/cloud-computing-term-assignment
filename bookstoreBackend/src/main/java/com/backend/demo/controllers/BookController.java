@@ -2,6 +2,7 @@ package com.backend.demo.controllers;
 
 import com.backend.demo.entity.Book;
 import com.backend.demo.repo.BookProcess;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,9 +30,10 @@ public class BookController {
             return "error";
         }
     }
-    @PostMapping("/removeBook")
+    @PostMapping("/removeBook/{bookId}")
     @CrossOrigin(origins = "*")
-    String removeBook(@RequestBody int bookId){
+    @Transactional
+    String removeBook(@PathVariable int bookId){
         try {
             bookProcess.deleteBookByBookId(bookId);
             return "success";
