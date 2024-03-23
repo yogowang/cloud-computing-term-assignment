@@ -4,8 +4,8 @@ import SharedUIStyles from "../styles/SharedUIStyles";
 //source:https://reactnavigation.org/docs/params/
 const AdminIndex = ({navigation,route}) => {
     const {userName,isadmin}=route.params
-    const toProduct=()=>{
-        navigation.push("Product",{userName})
+    const toDelete=()=>{
+        navigation.push("DeleteBook")
     }
     const toLogout=()=>{
         navigation.replace("UserLogin")
@@ -18,7 +18,7 @@ const AdminIndex = ({navigation,route}) => {
     }
     return(
         <View style={SharedUIStyles.container}>
-            <TouchableOpacity style={SharedUIStyles.loginBtn} onPress={toProduct}>
+            <TouchableOpacity style={SharedUIStyles.loginBtn} onPress={toDelete}>
                 <Text style={SharedUIStyles.loginText}>Delete Books</Text>
             </TouchableOpacity>
             <TouchableOpacity style={SharedUIStyles.loginBtn} onPress={toInfo}>

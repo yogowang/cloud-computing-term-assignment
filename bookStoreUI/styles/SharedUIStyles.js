@@ -80,6 +80,14 @@ export default StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
+    deleteButton: {
+        backgroundColor: "#4caf50",
+        padding: 10,
+        borderRadius: 5,
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+    },
     addButtonText: {
         color: "white",
         marginRight: 5,

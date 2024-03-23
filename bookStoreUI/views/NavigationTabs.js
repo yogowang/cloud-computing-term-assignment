@@ -8,6 +8,7 @@ import UserInfo from "./UserInfo";
 import Cart from "./Cart";
 import AdminIndex from "./AdminIndex";
 import AddBook from "./AddBook";
+import DeleteBook from "./DeleteBook";
 const Stack = createStackNavigator();
 const NavigationTabs=()=>{
     return(
@@ -21,6 +22,7 @@ screenOptions={{headerShown: false}}>
     <Stack.Screen name='Cart' component={Cart}/>
     <Stack.Screen name='AdminIndex' component={AdminIndex}/>
     <Stack.Screen name='AddBook' component={AddBook}/>
+    <Stack.Screen name='DeleteBook' component={DeleteBook}/>
 </Stack.Navigator>)
 };
 export default NavigationTabs;

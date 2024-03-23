@@ -28,7 +28,16 @@ public class BookController {
             e.printStackTrace();
             return "error";
         }
-
-
+    }
+    @PostMapping("/removeBook")
+    @CrossOrigin(origins = "*")
+    String removeBook(@RequestBody int bookId){
+        try {
+            bookProcess.deleteBookByBookId(bookId);
+            return "success";
+        }catch (Exception e){
+            e.printStackTrace();
+            return "error";
+        }
     }
 }
