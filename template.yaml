@@ -42,4 +42,98 @@ Resources:
       PubliclyAccessible: true
       MultiAZ: false
       StorageType: gp2
-       
+#source:https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-secretsmanager-secret.html
+  BookstoreSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: /secrets/test/db
+      SecretString: '{"username":"admin","password":"wyc200081"}'
+#Source:https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html
+  LambdaBookStore:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: bookstoreLambda
+      Runtime: java21
+      Role: arn:aws:iam::905418136909:role/LabRole
+      Handler: com.backend.demo.LambdaStreamHandler::handleRequest
+      Code:
+        S3Bucket: bucket-for-bookstore
+        S3Key: demo-0.0.1-SNAPSHOT.jar
+      Timeout: 60
+#source:https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-restapi.html
+#source:https://www.youtube.com/watch?v=jBD5u80dCQg
+#source:https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-resource.html
+  ApiGatewayBookstore:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: BookstoreApi
+  ApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt
+        - ApiGatewayBookstore
+        - RootResourceId
+      PathPart: bookstoreLambda
+      RestApiId: !Ref  ApiGatewayBookstore
+  ApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: GET
+      ResourceId: !Ref ApiResource
+      RestApiId: !Ref ApiGatewayBookstore
+      Integration:
+        Type: AWS
+        IntegrationResponses:
+          - StatusCode: 200
+        IntegrationHttpMethod: GET
+        Uri: !Sub
+          - >-
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFuncNameArn}/invocations
+          - LambdaFuncNameArn: !GetAtt LambdaBookStore.Arn
+            DependsOn:
+              - ApiResource
+  APIGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref ApiGatewayBookstore
+      StageName: books
+    DependsOn:
+      - ApiMethod
+  APIGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt LambdaBookStore.Arn
+      Principal: apigateway.amazonaws.com
+    DependsOn:
+      - APIGatewayDeployment
+#source:https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-backup-backupplan.html
+#source:https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-backup-backupplan-backupruleresourcetype.html
+#source:https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-backup-backupselection.html
+  VaultBookstore:
+    Type: AWS::Backup::BackupVault
+    Properties:
+      BackupVaultName: VaultBookstore
+  BookstoreBackupPlan:
+    Type: AWS::Backup::BackupPlan
+    Properties:
+      BackupPlan:
+        BackupPlanName: BookstoreBackupPlan
+        BackupPlanRule:
+          - RuleName: DailyBackup
+            TargetBackupVault: !Ref VaultBookstore
+            ScheduleExpression: 'cron(0 5 * * ? *)' # Daily at 05:00 UTC
+            StartWindowMinutes: 120
+            CompletionWindowMinutes: 120
+            Lifecycle:
+             DeleteAfterDays: 2
+  BookstoreBackupSelection:
+    Type: AWS::Backup::BackupSelection
+    Properties:
+      BackupPlanId: !Ref BookstoreBackupPlan
+      BackupSelection:
+        SelectionName: InstanceSelection
+        IamRoleArn: arn:aws:iam::905418136909:role/LabRole
+        # The list of resource ARNs to be backed up
+        Resources:
+          - !GetAtt LambdaBookStore.Arn

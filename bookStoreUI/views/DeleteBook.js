@@ -12,8 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import SharedUIStyles from "../styles/SharedUIStyles";
 import axios from "axios";
-const ECommerceApp = ({navigation,route}) => {
-    const {userName}=route.params
+const DeleteBook = ({navigation}) => {
     const [products, setProducts] = useState([]);
     useEffect(() => {
         fetch('https://e5ynuit12m.execute-api.us-east-1.amazonaws.com/books/fetchAllBook')
@@ -21,23 +20,15 @@ const ECommerceApp = ({navigation,route}) => {
             .then((data) => setProducts(data))
             .catch((error) => console.error(error));
     }, []);
-    const [cart, setCart] = useState([]);
-    const [isModalVisible, setModalVisible] = useState(false);
     const back=()=>{
         navigation.goBack()
     }
-    const addToCart = (book) => {
-        const number=1
-        const bookId=book.bookId
-        const bookName=book.bookName
-        let pairing ={
-            bookId,userName,number,bookName
-        }
-        axios.post("http://localhost:8080/addCart",pairing)
+    const RemoveBook = (bookId) => {
+        axios.post(`http://localhost:8080/removeBook/${bookId}`)
             .then((response)=>{
                 //500 means internal error
                 if(response.data!=="error"){
-                    alert("add successful")
+                    alert("remove successful")
                 }
                 else{
                     alert("error occurred")
@@ -46,14 +37,7 @@ const ECommerceApp = ({navigation,route}) => {
         //setCart([...cart, product]);
     };
 
-    const removeFromCart = (productId) => {
-        const updatedCart = cart.filter((item) => item.bookId !== productId);
-        setCart(updatedCart);
-    };
 
-    const calculateTotal = () => {
-        return cart.reduce((total, item) => total + item.price, 0).toFixed(2);
-    };
 
     const renderProductItem = ({ item }) => (
         <View style={SharedUIStyles.productItemContainer}>
@@ -63,42 +47,14 @@ const ECommerceApp = ({navigation,route}) => {
             </Text>
             <TouchableOpacity
                 style={SharedUIStyles.addButton}
-                onPress={() => addToCart(item)}
+                onPress={() => RemoveBook(item.bookId)}
             >
-                <Text style={SharedUIStyles.addButtonText}>Add to Cart</Text>
+                <Text style={SharedUIStyles.addButtonText}>delete</Text>
                 <Ionicons name="cart-outline" size={20} color="white" />
             </TouchableOpacity>
         </View>
     );
 
-    const renderCartItem = ({ item }) => (
-        <View style={SharedUIStyles.cartItemContainer}>
-            <View>
-                <Text style={SharedUIStyles.cartItemName}>{item.bookName}</Text>
-                <Text style={SharedUIStyles.cartItemPrice}>
-                    ${item.price.toFixed(2)}
-                </Text>
-            </View>
-            <TouchableOpacity
-                style={SharedUIStyles.removeButton}
-                onPress={() => removeFromCart(item.bookId)}
-            >
-                <Ionicons name="trash-outline" size={20} color="white" />
-            </TouchableOpacity>
-        </View>
-    );
-
-    const toggleModal = () => {
-        setModalVisible(!isModalVisible);
-    };
-
-    const handleCheckout = () => {
-        if (cart.length === 0) {
-            toggleModal();
-        } else {
-            toggleModal();
-        }
-    };
 
     return (
         <View style={SharedUIStyles.container}>
@@ -114,4 +70,4 @@ const ECommerceApp = ({navigation,route}) => {
     );
 };
 
-export default ECommerceApp;
+export default DeleteBook;
