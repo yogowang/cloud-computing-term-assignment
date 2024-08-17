@@ -1,41 +1,58 @@
 package com.backend.demo.controllers;
 
+import com.backend.demo.entity.LoginInfo;
+import com.backend.demo.entity.User;
+import com.backend.demo.repo.UserProcess;
 import org.springframework.http.HttpEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
 @RestController
 public class login {
-    @PostMapping("/calculate")
-    public Map<String, Object> calculate(@RequestBody Map<String,Object> jsonData)  {
-        Map<String,Object> ans = new HashMap<>();
-        if(jsonData.get("file")==null){
-            ans.put("file",null);
-            ans.put("error","Invalid JSON input.");
+    private final UserProcess userProcess;
+
+    public login(UserProcess userProcess) {
+        this.userProcess = userProcess;
+    }
+
+    @PostMapping("/login")
+    @CrossOrigin(origins = "*")
+    public Map<String,Object> checkLoginInfo(@RequestBody LoginInfo loginInfo)  {
+        Map<String,Object> ans =new HashMap<>();
+        String userName=loginInfo.getUserName();
+        String password= loginInfo.getPassword();
+        Optional<User> user=userProcess.findUserByUserName(userName);
+        if(user.isEmpty()){
+            ans.put("loginstat","error");
             return ans;
         }
-        String fileName=jsonData.get("file").toString();
-        String item=jsonData.get("product").toString();
-        File file=new File("/tmp/data/"+fileName);
-        if(!file.exists()){
-            ans.put("file",fileName);
-            ans.put("error","File not found.");
+        if(!Objects.equals(user.get().getPassword(), password)){
+            ans.put("loginstat","error");
             return ans;
         }
-        //source:https://www.baeldung.com/rest-template
-        /*
-         * In the original code at 5.1, it uses a httpEntity to wrap the foo object to send to another
-         * controller. In my code I substituted  the foo with the map data type to pass this to another
-         * container.
-         * */
-        RestTemplate restTemplate = new RestTemplate();
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(jsonData);
-        ans = restTemplate.postForObject("http://container2:7000/process", request, Map.class);
+        int isAdmin=user.get().getIsAdmin();
+        ans.put("loginstat","success");
+        ans.put("isadmin",isAdmin);
+        ans.put("username",userName);
         return ans;
+    }
+    @PostMapping("/register")
+    @CrossOrigin(origins = "*")
+    public String register(@RequestBody User user){
+        try {
+            userProcess.save(user);
+            return user.getUserName();
+        }catch (Exception e){
+            e.printStackTrace();
+            return "error";
+        }
+
     }
 }

@@ -1,0 +1,139 @@
+# source:https://www.jennapederson.com/blog/provisioning-an-ec2-instance-with-cloudformation-part-1/
+AWSTemplateFormatVersion: 2010-09-09
+Description: Iac for bookstore
+
+Resources:
+  WebAppInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0d5eff06f840b45e9 # ImageID valid only in us-east-1 region
+      InstanceType: t2.micro
+      KeyName: NewBookstoreKey
+      SecurityGroupIds:
+        - !Ref WebAppSecurityGroup
+
+  WebAppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Join ["-", [store-security-group, dev]]
+      GroupDescription: "Allow HTTP/HTTPS and SSH inbound and outbound traffic"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: "-1"
+          CidrIp: 0.0.0.0/0
+#source: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-dbinstance.html
+  BookstoreRDS:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: store-database
+      DBName: bookstore
+      AllocatedStorage: "20"
+      MasterUsername: admin
+      MasterUserPassword: wyc200081
+      Engine: mysql
+      DBInstanceClass: db.t2.micro
+      PubliclyAccessible: true
+      MultiAZ: false
+      StorageType: gp2
+#source:https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-secretsmanager-secret.html
+  BookstoreSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: /secrets/test/db
+      SecretString: '{"username":"admin","password":"wyc200081"}'
+#Source:https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html
+  LambdaBookStore:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: bookstoreLambda
+      Runtime: java21
+      Role: arn:aws:iam::905418136909:role/LabRole
+      Handler: com.backend.demo.LambdaStreamHandler::handleRequest
+      Code:
+        S3Bucket: bucket-for-bookstore
+        S3Key: demo-0.0.1-SNAPSHOT.jar
+      Timeout: 60
+#source:https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-restapi.html
+#source:https://www.youtube.com/watch?v=jBD5u80dCQg
+#source:https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-resource.html
+  ApiGatewayBookstore:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: BookstoreApi
+  ApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt
+        - ApiGatewayBookstore
+        - RootResourceId
+      PathPart: bookstoreLambda
+      RestApiId: !Ref  ApiGatewayBookstore
+  ApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: GET
+      ResourceId: !Ref ApiResource
+      RestApiId: !Ref ApiGatewayBookstore
+      Integration:
+        Type: AWS
+        IntegrationResponses:
+          - StatusCode: 200
+        IntegrationHttpMethod: GET
+        Uri: !Sub
+          - >-
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFuncNameArn}/invocations
+          - LambdaFuncNameArn: !GetAtt LambdaBookStore.Arn
+            DependsOn:
+              - ApiResource
+  APIGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref ApiGatewayBookstore
+      StageName: books
+    DependsOn:
+      - ApiMethod
+  APIGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt LambdaBookStore.Arn
+      Principal: apigateway.amazonaws.com
+    DependsOn:
+      - APIGatewayDeployment
+#source:https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-backup-backupplan.html
+#source:https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-backup-backupplan-backupruleresourcetype.html
+#source:https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-backup-backupselection.html
+  VaultBookstore:
+    Type: AWS::Backup::BackupVault
+    Properties:
+      BackupVaultName: VaultBookstore
+  BookstoreBackupPlan:
+    Type: AWS::Backup::BackupPlan
+    Properties:
+      BackupPlan:
+        BackupPlanName: BookstoreBackupPlan
+        BackupPlanRule:
+          - RuleName: DailyBackup
+            TargetBackupVault: !Ref VaultBookstore
+            ScheduleExpression: 'cron(0 5 * * ? *)' # Daily at 05:00 UTC
+            StartWindowMinutes: 120
+            CompletionWindowMinutes: 120
+            Lifecycle:
+             DeleteAfterDays: 2
+  BookstoreBackupSelection:
+    Type: AWS::Backup::BackupSelection
+    Properties:
+      BackupPlanId: !Ref BookstoreBackupPlan
+      BackupSelection:
+        SelectionName: InstanceSelection
+        IamRoleArn: arn:aws:iam::905418136909:role/LabRole
+        # The list of resource ARNs to be backed up
+        Resources:
+          - !GetAtt LambdaBookStore.Arn
